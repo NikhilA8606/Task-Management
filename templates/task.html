@@ -1,0 +1,50 @@
+<h1>Task Management Application</h1>
+<!-- {{tasks}} -->
+
+<!-- {% if tasks %}
+<h1>task compleated</h1>
+{% else %}
+<h1>No task</h1>
+{% endif %} -->
+
+<!-- {{request.GET}} -->
+
+<!-- {% for task in tasks %} {{task}} <br/> {% endfor %} -->
+
+<form action="add-task" method="get">
+    <input type="text" name="task">
+    <button type="submit">Submit</button>
+</form>
+
+
+<h2>Search tasks</h2>
+<form action="" method="get">
+    <input type="text" name="search">
+    <button type="submit">Search</button>
+</form>
+
+<h1>Tasks</h1>
+{% for task in tasks %} 
+{{forloop.counter}}.{{task.title}} - {{task.created_date}}
+<a href="delete-task/{{task.id}}">delete task</a>&nbsp;
+<a href="update-task/{{task.id}}">update task</a>&nbsp;
+<a href="detail-task/{{task.id}}">detail task</a>&nbsp;
+<br/>
+{% endfor %}
+
+{% for page in paginator.page_range %}
+<li>
+    <a href="?page={{ page }}&search={{request.GET.search}}">{{page}}</a>
+</li>
+{% endfor %}
+
+<!-- <h1>Task completed index</h1>
+<form action="add-comp-task" method="get">
+    <input type="text" name="task">
+    <button type="submit">Submit</button>
+</form>
+
+<h1>View Completed Tasks</h1>
+{% for task in comp_tasks %} 
+{{forloop.counter}}.{{task}} <a href="delete-comp-task/{{forloop.counter}}">Completed</a><br/>
+{% endfor %} -->
