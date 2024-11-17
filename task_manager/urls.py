@@ -17,16 +17,31 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from tasks.views import add_task_view,delete_task_view,GenericTaskView,GenericTaskCreateView,GenericTaskUpdateView,GenericTaskDetailView
+
+from tasks.views import add_task_view,delete_task_view,GenericTaskView,GenericTaskCreateView,UserCreateView,UserLoginView, GenericTaskUpdateView,GenericTaskDetailView,GenericTaskDeleteView,session_storage_view
+from tasks.apiviews import TaskListAPI
+from rest_framework.routers import SimpleRouter
+from tasks.apiviews import TaskViewSet
+from django.contrib.auth.views import LogoutView
+
+router = SimpleRouter()
+
+router.register('api/task',TaskViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('taskapi',TaskListAPI.as_view()),
     path('task',GenericTaskView.as_view()),
     path('create-task',GenericTaskCreateView.as_view()),
     path('update-task/<pk>',GenericTaskUpdateView.as_view()),
     path('detail-task/<pk>',GenericTaskDetailView.as_view()),
+    path('delete-task/<pk>',GenericTaskDeleteView.as_view()),
+    path('user/login',UserLoginView.as_view()),
+    path('user/logout',LogoutView.as_view()),
+    path('sessiontest',session_storage_view),
+    path('user/signup',UserCreateView.as_view()),
     path('add-task',add_task_view),
-    path("delete-task/<int:index>",delete_task_view),
+    # path("delete-task/<int:index>",delete_task_view),
     # path('add-comp-task',add_com_task_view),
     # path("delete-comp-task/<int:val>",delete_comp_task_view),
-]
+] + router.urls
