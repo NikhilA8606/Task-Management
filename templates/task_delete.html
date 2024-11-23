@@ -1,5 +1,44 @@
-<form action="" method="post">
-    {% csrf_token %}
-    <p>Are you sure you want to delete "{{object}}"</p>
-    <button type="submit">Confirm</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delete Task</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 text-gray-800 font-sans">
+    <div class="max-w-md mx-auto px-6 py-8 bg-white shadow-lg rounded-xl my-10">
+      <header class="text-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-800">
+          <i class="fas fa-trash-alt text-red-500 mr-2"></i> Delete Task
+        </h1>
+      </header>
+
+      <div class="text-center space-y-4">
+        <p class="text-lg text-gray-600">
+          Are you sure you want to delete 
+          <span class="font-semibold text-gray-800">"{{ object }}"</span>?
+        </p>
+        <form method="post" class="flex justify-center space-x-4">
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
+          >
+            <i class="fas fa-check mr-2"></i> Confirm
+          </button>
+          <a
+            href="/task"
+            class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-sm"
+          >
+            <i class="fas fa-times mr-2"></i> Cancel
+          </a>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

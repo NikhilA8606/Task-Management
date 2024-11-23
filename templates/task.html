@@ -1,50 +1,184 @@
-<h1>Task Management Application</h1>
-<!-- {{tasks}} -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To Do List Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 text-gray-800 font-sans">
+    <!-- Container Box -->
+    <div class="max-w-3xl mx-auto px-6 py-8 bg-white shadow-lg rounded-xl my-10">
+      
+      <!-- Header Section with Flex for Left and Right Alignment -->
+      <header class="flex justify-between items-center mb-6">
+        {% if user.is_authenticated %}
+        <!-- Left: Welcome Message -->
+        <h2 class="text-lg font-semibold text-gray-700">
+          <i class="fas fa-user-circle mr-2 text-green-500"></i> Welcome, {{ user.username }}!
+        </h2>
 
-<!-- {% if tasks %}
-<h1>task compleated</h1>
-{% else %}
-<h1>No task</h1>
-{% endif %} -->
+        <!-- Right: Logout Button -->
+        <form action="/user/login/" method="post" class="flex items-center">
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 text-sm"
+          >
+            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+          </button>
+        </form>
+        {% endif %}
+      </header>
 
-<!-- {{request.GET}} -->
+      <!-- Add New Task Button -->
+      <div class="text-center mb-6">
+        <a href="/create-task/" class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 text-sm">
+          <i class="fas fa-plus-circle mr-2"></i> Add New Task
+        </a>
+      </div>
 
-<!-- {% for task in tasks %} {{task}} <br/> {% endfor %} -->
+      <!-- Tabs Section -->
+      <div class="flex justify-around bg-gray-200 rounded-lg mb-6">
+        <button
+          id="all-tab"
+          class="flex-1 text-center py-3 font-semibold cursor-pointer border-b-4 border-transparent hover:text-indigo-600 focus:outline-none"
+          onclick="showTab('all')"
+        >
+          <i class="fas fa-list mr-2"></i> All Tasks
+        </button>
+        <button
+          id="pending-tab"
+          class="flex-1 text-center py-3 font-semibold cursor-pointer border-b-4 border-transparent hover:text-yellow-600 focus:outline-none"
+          onclick="showTab('pending')"
+        >
+          <i class="fas fa-tasks mr-2"></i> Pending Tasks
+        </button>
+        <button
+          id="completed-tab"
+          class="flex-1 text-center py-3 font-semibold cursor-pointer border-b-4 border-transparent hover:text-green-600 focus:outline-none"
+          onclick="showTab('completed')"
+        >
+          <i class="fas fa-check-circle mr-2"></i> Completed Tasks
+        </button>
+      </div>
 
-<form action="add-task" method="get">
-    <input type="text" name="task">
-    <button type="submit">Submit</button>
-</form>
+      <!-- All Tasks Section -->
+      <section id="all-section" class="space-y-4">
+        <h4 class="text-lg font-semibold text-gray-700">All Tasks</h4>
+        <div class="space-y-4">
+          {% for task in tasks %}
+          <div class="flex items-center justify-between p-4 bg-gray-50 border rounded-lg shadow-sm hover:shadow-md transition">
+            <div>
+              <h5 class="text-lg {% if task.completed %}line-through text-gray-500{% else %}text-gray-700{% endif %}">
+                {{ task.title }}
+              </h5>
+              <p class="text-sm text-gray-400">{{ task.created_date }}</p>
+            </div>
+            <div class="flex space-x-4">
+              <!-- Icon changes based on completion status -->
+              {% if task.completed %}
+                <span class="text-green-500" title="Completed">
+                  <i class="fas fa-check-circle"></i>
+                </span>
+              {% else %}
+                <a href="/complete-task/{{ task.id }}/" class="text-green-500 hover:text-yellow-600" title="Mark as Completed">
+                  <i class="fas fa-clock"></i>
+                </a>
+              {% endif %}
+              <a href="/detail-task/{{ task.id }}/" class="text-yellow-500 hover:text-yellow-600" title="View Details">
+                <i class="fas fa-info-circle"></i>
+              </a>
+              <a href="/update-task/{{ task.id }}/" class="text-blue-500 hover:text-blue-600" title="Update Task">
+                <i class="fas fa-edit"></i>
+              </a>
+              <a href="/delete-task/{{ task.id }}/" class="text-red-500 hover:text-red-600" title="Delete Task">
+                <i class="fas fa-trash"></i>
+              </a>
+            </div>
+          </div>
+          
+          {% empty %}
+          <div class="text-center text-gray-500 py-6 italic">
+            <i class="fas fa-folder-open mr-2"></i>No tasks available.
+          </div>
+          {% endfor %}
+        </div>
+      </section>
 
+      <!-- Pending Tasks Section -->
+      <section id="pending-section" class="space-y-4 hidden">
+        <h4 class="text-lg font-semibold text-gray-700">Pending Tasks</h4>
+        <div class="space-y-4">
+            {% for task in tasks %}
+            {% if not task.completed %}
+              <div class="flex items-center justify-between p-4 bg-gray-50 border rounded-lg shadow-sm hover:shadow-md transition">
+                <div>
+                  <h5 class="text-lg text-gray-700">{{ task.title }}</h5>
+                  <p class="text-sm text-gray-400">{{ task.created_date }}</p>
+                </div>
+                <div class="flex space-x-4">
+                  <a href="/complete-task/{{ task.id }}/" class="text-green-500 hover:text-yellow-600" title="Mark as Completed">
+                    <i class="fas fa-clock"></i>
+                  </a>
+                  <a href="/update-task/{{ task.id }}/" class="text-blue-500 hover:text-blue-600" title="Update Task">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a href="/delete-task/{{ task.id }}/" class="text-red-500 hover:text-red-600" title="Delete Task">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+          
+        </div>
+      </section>
 
-<h2>Search tasks</h2>
-<form action="" method="get">
-    <input type="text" name="search">
-    <button type="submit">Search</button>
-</form>
+      <!-- Completed Tasks Section -->
+      <section id="completed-section" class="space-y-4 hidden">
+        <h4 class="text-lg font-semibold text-gray-700">Completed Tasks</h4>
+        <div class="space-y-4">
+            {% for task in tasks %}
+            {% if task.completed %}
+              <div class="flex items-center justify-between p-4 bg-gray-50 border rounded-lg shadow-sm hover:shadow-md transition">
+                <div>
+                  <h5 class="text-lg line-through text-gray-500">{{ task.title }}</h5>
+                  <p class="text-sm text-gray-400">{{ task.completed_date }}</p>
+                </div>
+                <div class="flex space-x-4">
+                  <span class="text-green-500" title="Completed">
+                    <i class="fas fa-check-circle"></i>
+                  </span>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+          
+        </div>
+      </section>
+    </div>
 
-<h1>Tasks</h1>
-{% for task in tasks %} 
-{{forloop.counter}}.{{task.title}} - {{task.created_date}}
-<a href="delete-task/{{task.id}}">delete task</a>&nbsp;
-<a href="update-task/{{task.id}}">update task</a>&nbsp;
-<a href="detail-task/{{task.id}}">detail task</a>&nbsp;
-<br/>
-{% endfor %}
-
-{% for page in paginator.page_range %}
-<li>
-    <a href="?page={{ page }}&search={{request.GET.search}}">{{page}}</a>
-</li>
-{% endfor %}
-
-<!-- <h1>Task completed index</h1>
-<form action="add-comp-task" method="get">
-    <input type="text" name="task">
-    <button type="submit">Submit</button>
-</form>
-
-<h1>View Completed Tasks</h1>
-{% for task in comp_tasks %} 
-{{forloop.counter}}.{{task}} <a href="delete-comp-task/{{forloop.counter}}">Completed</a><br/>
-{% endfor %} -->
+    <!-- JavaScript to toggle tabs -->
+    <script>
+      function showTab(tab) {
+        const tabs = ["all", "pending", "completed"];
+        tabs.forEach((t) => {
+          document.getElementById(`${t}-section`).classList.toggle("hidden", t !== tab);
+          document.getElementById(`${t}-tab`).classList.toggle(
+            "border-indigo-500",
+            t === tab
+          );
+          document.getElementById(`${t}-tab`).classList.toggle(
+            "text-indigo-500",
+            t === tab
+          );
+        });
+      }
+    </script>
+  </body>
+</html>

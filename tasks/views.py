@@ -36,7 +36,7 @@ class TaskCreateForm(ModelForm):
 
     def clean_title(self):
         title = self.cleaned_data["title"]
-        if len(title) < 10:
+        if len(title) < 5:
             raise ValidationError("Title is too small")
         return title.upper()
     class Meta:
@@ -49,10 +49,23 @@ class GenericTaskCreateView(CreateView):
     success_url = "/task"
 
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save(commit=False)
         self.object.user = self.request.user
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
+    
+class CompleteTaskView(UpdateView):
+    model = Task
+    fields = ("completed",)
+    template_name = 'task_complete.html'
+    success_url = '/task'  
+
+    def form_valid(self, form):
+        task = form.save(commit=False)
+        task.completed = True
+        task.save()
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class GenericTaskUpdateView(UpdateView,AuthorisedTaskManager):
     model = Task     

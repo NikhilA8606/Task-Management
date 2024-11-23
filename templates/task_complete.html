@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Update Task</title>
+    <title>Complete Task</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -12,37 +12,32 @@
   </head>
   <body class="bg-gray-100 text-gray-800 font-sans">
     <div class="max-w-md mx-auto px-6 py-8 bg-white shadow-lg rounded-xl my-10">
-      <!-- Header Section -->
       <header class="text-center mb-6">
         <h1 class="text-2xl font-semibold text-gray-800">
-          <i class="fas fa-edit text-blue-500 mr-2"></i> Update Task
+          <i class="fas fa-check-circle text-green-500 mr-2"></i> Complete Task
         </h1>
       </header>
 
-      <!-- Form Section -->
-      <form action="" method="post" class="space-y-6">
-        {% csrf_token %}
-        <div class="space-y-4">
-          <!-- Render Form Fields -->
-          {{ form.as_p }}
-        </div>
-        <div class="flex justify-end space-x-4">
-          <!-- Submit Button -->
+      <div class="text-center space-y-4">
+        <p class="text-lg text-gray-600">
+          Are you sure you want to mark this task as completed?
+        </p>
+        <form method="post" class="flex justify-center space-x-4">
+          {% csrf_token %}
           <button
             type="submit"
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
           >
-            <i class="fas fa-save mr-2"></i> Update
+            <i class="fas fa-check mr-2"></i> Yes, Complete
           </button>
-          <!-- Cancel Button -->
           <a
             href="/task"
             class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-sm"
           >
             <i class="fas fa-times mr-2"></i> Cancel
           </a>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </body>
 </html>
